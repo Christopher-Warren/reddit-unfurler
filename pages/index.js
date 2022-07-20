@@ -31,7 +31,7 @@ export default function Index() {
                 <br /> as <br />
                 image
             </Title>
-            <Group align={'end'}>
+            <Group align={'end'} id="my-node">
                 <MediaQuery smallerThan={'xs'} styles={{ width: '100%', flex: 'none !important' }}>
                     <RedditLinkInput
                         fetchPost={fetchPost}

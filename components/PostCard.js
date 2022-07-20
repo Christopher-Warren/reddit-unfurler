@@ -1,6 +1,6 @@
 import {
     Card,
-    Image,
+    // Image,
     Text,
     useMantineTheme,
     Title,
@@ -10,13 +10,21 @@ import {
     Center,
     Paper,
     Container,
-    Group
+    Group,
+    Button
 } from '@mantine/core';
+import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { ArrowBigTop as ArrowNarrowUp, MessageCircle2, Calendar } from 'tabler-icons-react';
+import domtoimage from 'dom-to-image';
 
-export default function PostCard({ post }) {
+import NextImage from 'next/image';
+
+export default function PostCard({ post, ref }) {
     const theme = useMantineTheme();
+    const postRef = useRef();
+
+    const [dataUrl, setDataUrl] = useState('');
 
     const primaryTextColor =
         theme.colorScheme === 'dark' ? theme.colors.gray[2] : theme.colors.dark[9];
@@ -64,10 +72,30 @@ export default function PostCard({ post }) {
         );
     };
 
+    useEffect(() => {
+        domtoimage
+            .toPng(postRef.current)
+            .then(function (dataUrl) {
+                setDataUrl(dataUrl);
+            })
+            .catch(function (error) {
+                console.error('oops, something went wrong!', error);
+            });
+    }, []);
+
+    console.log('D URL', dataUrl);
     return (
         // Get snapshot of this element
         <Container p="sm">
-            <Paper px={'lg'} py={'lg'} shadow="xl">
+            {dataUrl && <img src={dataUrl} />}
+
+            <Paper
+                style={{ position: 'relative', left: '-200px' }}
+                px={'lg'}
+                py={'lg'}
+                shadow="xl"
+                ref={postRef}
+            >
                 {/* <Card shadow="sm" p="lg">
                     <Card.Section>
                         remove
@@ -78,7 +106,7 @@ export default function PostCard({ post }) {
                     <Group spacing={'xs'}>
                         <Avatar
                             radius={'xl'}
-                            src={'https://i.pravatar.cc/150?img=1'}
+                            // src={'https://i.pravatar.cc/150?img=1'}
                             size={'sm'}
                             style={{ display: 'inline-block' }}
                         />
