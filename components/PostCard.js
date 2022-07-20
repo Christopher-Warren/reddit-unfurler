@@ -16,7 +16,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { ArrowBigTop as ArrowNarrowUp, MessageCircle2, Calendar } from 'tabler-icons-react';
-import domtoimage from 'dom-to-image';
+import html2canvas from 'html2canvas';
 
 import NextImage from 'next/image';
 
@@ -73,24 +73,26 @@ export default function PostCard({ post, ref }) {
     };
 
     useEffect(() => {
-        domtoimage
-            .toPng(postRef.current)
-            .then(function (dataUrl) {
-                setDataUrl(dataUrl);
-            })
-            .catch(function (error) {
-                console.error('oops, something went wrong!', error);
-            });
+        console.log(postRef);
+        html2canvas(postRef.current, {
+            removeContainer: false,
+            allowTaint: true,
+            onclone: (doc, element) => {
+                element.style.display = 'block';
+            }
+        }).then(function (canvas) {
+            console.log(canvas);
+            document.body.appendChild(canvas);
+        });
     }, []);
 
-    console.log('D URL', dataUrl);
     return (
         // Get snapshot of this element
         <Container p="sm">
             {dataUrl && <img src={dataUrl} />}
 
             <Paper
-                style={{ position: 'relative', left: '-200px' }}
+                style={{ position: 'relative', display: 'none' }}
                 px={'lg'}
                 py={'lg'}
                 shadow="xl"
